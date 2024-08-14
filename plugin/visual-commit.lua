@@ -1,1 +1,1 @@
-vim.api.nvim_create_user_command("Commit", require("visual-commit").commit, {})
+vim.api.nvim_create_user_command("VisualCommit", require("visual-commit").commit, {})
