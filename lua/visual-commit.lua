@@ -1,5 +1,5 @@
 -- main module file
-local module = require("git_commit.module")
+local module = require("visual-commit.module")
 
 ---@class Config
 ---@field opt string Your config option
