@@ -2,6 +2,11 @@
 
 a neovim plugin that provides a UI for creating git commits. still very WIP, expect bugs and weird behaviour
 
+## preview
+
+![image](https://github.com/user-attachments/assets/8c46d462-b3f9-4140-aaf1-88adb1769765)
+
+
 ## installation
 
 using [lazy.nvim](https://github.com/folke/lazy.nvim):
