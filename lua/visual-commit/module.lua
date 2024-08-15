@@ -1,31 +1,26 @@
+---
+---@param args string[]
+---@param env table<string, string>|nil
+---@return vim.SystemCompleted
+local function run_command(args, env)
+  if env == nil then
+    env = {}
+  end
+  return vim.system(args):wait()
+end
+
 local function get_git_files()
-  local handle_m = io.popen("git ls-files -m")
-  --- @type string
-  local modified_files
-  if handle_m ~= nil then
-    modified_files = handle_m:read("*a")
-    handle_m:close()
-  else
+  local modified_files = run_command({ "git", "ls-files", "-m" }).stdout
+  local staged_files = run_command({ "git", "diff", "--name-only", "--cached" }).stdout
+  local untracked_files = run_command({ "git", "ls-files", "--others", "--exclude-standard" }).stdout
+
+  if modified_files == nil then
     modified_files = ""
   end
-
-  local handle_s = io.popen("git diff --name-only --cached")
-  --- @type string
-  local staged_files
-  if handle_s ~= nil then
-    staged_files = handle_s:read("*a")
-    handle_s:close()
-  else
+  if staged_files == nil then
     staged_files = ""
   end
-
-  local handle_u = io.popen("git ls-files --others --exclude-standard")
-  --- @type string
-  local untracked_files
-  if handle_u ~= nil then
-    untracked_files = handle_u:read("*a")
-    handle_u:close()
-  else
+  if untracked_files == nil then
     untracked_files = ""
   end
 
@@ -37,13 +32,10 @@ local function get_git_files()
 end
 
 local function is_git_directory()
-  local handle = io.popen("git rev-parse --is-inside-work-tree")
-  local result
-  if handle ~= nil then
-    result = handle:read("*a")
-    handle:close()
-  else
-    result = ""
+  local result = run_command({ "git", "rev-parse", "--is-inside-work-tree" }).stdout
+
+  if result == nil then
+    return false
   end
 
   return result == "true\n"
@@ -156,7 +148,7 @@ M.commit = function(git_commit_args_unknown)
 
           local git_add_command = { "git", "add" }
           vim.list_extend(git_add_command, files_to_commit)
-          local add_output = vim.system(git_add_command):wait()
+          local add_output = run_command(git_add_command)
 
           if add_output.code ~= 0 then
             vim.notify("Error staging files", vim.log.levels.ERROR)
@@ -165,7 +157,7 @@ M.commit = function(git_commit_args_unknown)
 
           local git_commit_command = { "git", "commit", "-m", commit_message }
           vim.list_extend(git_commit_command, git_commit_args)
-          local commit_output = vim.system(git_commit_command):wait()
+          local commit_output = run_command(git_commit_command)
 
           if commit_output.code ~= 0 then
             vim.notify(

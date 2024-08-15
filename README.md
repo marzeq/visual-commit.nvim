@@ -2,6 +2,11 @@
 
 a neovim plugin that provides a UI for creating git commits. still very WIP, expect bugs and weird behaviour
 
+## why use this?
+
+you see, you probably shouldn't. vim fugitive is miles better and more feature-rich. i just wanted to make my first plugin and this seemed like a good idea,
+and also because i don't need all the features of vim fugitive, just a simple way to stage files and write a commit message
+
 ## preview
 
 ![image](https://github.com/user-attachments/assets/8c46d462-b3f9-4140-aaf1-88adb1769765)
