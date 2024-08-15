@@ -42,13 +42,18 @@ you can use these to create a keybinding for the commit window:
 },
 ```
 
+additional arguments to `git commit` can be passed in the command like so:
+
+- `:VisualCommit --amend` will add the `--amend` flag to the `git commit` command
+- `require('visual-commit').commit("--amend")` or `require('visual-commit').commit({ "--amend" })` will do the same in lua
+
 ## features
 
 - [x] add a simple menu that allows for selecting the files to stage and inputting the commit message
 - [ ] somehow visually separating the already staged, unstaged, and untracked files
-- [ ] allow for amending commits
 - [ ] add an optional second screen that shows the diff and asks for confirmation
-- [ ] passing on arguments to `git commit` in the opts/method arguments
+- [x] passing on arguments to `git commit` in the command/method arguments
+- [ ] default arguments for `git commit` in opts
 
 ### known bugs/limitations
 

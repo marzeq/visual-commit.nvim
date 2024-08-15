@@ -36,18 +36,68 @@ local function get_git_files()
   }
 end
 
-local is_git_directory = function()
+local function is_git_directory()
   local handle = io.popen("git rev-parse --is-inside-work-tree")
-  local result = handle:read("*a")
-  handle:close()
+  local result
+  if handle ~= nil then
+    result = handle:read("*a")
+    handle:close()
+  else
+    result = ""
+  end
 
   return result == "true\n"
+end
+
+local function string_to_args(input)
+  local args = {}
+  local in_single_quotes = false
+  local in_double_quotes = false
+  local current_arg = ""
+
+  for i = 1, #input do
+    local char = input:sub(i, i)
+
+    if char == '"' and not in_single_quotes then
+      in_double_quotes = not in_double_quotes
+    elseif char == "'" and not in_double_quotes then
+      in_single_quotes = not in_single_quotes
+    elseif char == " " and not in_single_quotes and not in_double_quotes then
+      if #current_arg > 0 then
+        table.insert(args, current_arg)
+        current_arg = ""
+      end
+    else
+      current_arg = current_arg .. char
+    end
+  end
+
+  if #current_arg > 0 then
+    table.insert(args, current_arg)
+  end
+
+  return args
 end
 
 ---@class GitCommit
 local M = {}
 
-M.commit = function()
+---@param git_commit_args_unknown string|string[]
+M.commit = function(git_commit_args_unknown)
+  local git_commit_args
+  if type(git_commit_args_unknown) == "string" then
+    git_commit_args = string_to_args(git_commit_args_unknown)
+  elseif type(git_commit_args_unknown) == "table" then
+    git_commit_args = vim.tbl_map(function(arg)
+      return tostring(arg)
+    end, git_commit_args_unknown)
+  elseif git_commit_args_unknown == nil then
+    git_commit_args = {}
+  else
+    vim.notify("Invalid argument type", vim.log.levels.ERROR)
+    return
+  end
+
   if not is_git_directory() then
     vim.notify("Not a git repository", vim.log.levels.ERROR)
     return
@@ -114,6 +164,7 @@ M.commit = function()
           end
 
           local git_commit_command = { "git", "commit", "-m", commit_message }
+          vim.list_extend(git_commit_command, git_commit_args)
           local commit_output = vim.system(git_commit_command):wait()
 
           if commit_output.code ~= 0 then
