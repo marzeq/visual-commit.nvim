@@ -103,6 +103,16 @@ M.commit = function(git_commit_args_unknown)
 
   local git_files = vim.tbl_flatten({ modified, staged, untracked })
 
+  -- filter duplicates
+  local seen = {}
+  git_files = vim.tbl_filter(function(file)
+    if seen[file] then
+      return false
+    end
+    seen[file] = true
+    return true
+  end, git_files)
+
   if #git_files == 0 then
     vim.notify("No files to commit", vim.log.levels.INFO)
   end
