@@ -54,15 +54,15 @@ additional arguments to `git commit` can be passed in the command like so:
 
 ## features
 
-- [x] add a simple menu that allows for selecting the files to stage and inputting the commit message
-- [ ] somehow visually separating the already staged, unstaged, and untracked files
-- [ ] add an optional second screen that shows the diff and asks for confirmation
+- [x] a simple menu that allows for selecting the files to stage and inputting the commit message
+- [ ] visually separate the already staged, unstaged, and untracked files
+- [ ] an optional second screen that shows the diff and asks for confirmation
 - [x] passing on arguments to `git commit` in the command/method arguments
 - [ ] default arguments for `git commit` in opts
 
 ### known bugs/limitations
 
-- when commit signing is enabled and the ncurses dialog is used, it may screw up the terminal
+- when commit signing is enabled and the ncurses dialog is used, it will screw up the terminal and you will have to restart neovim (fix -> use a different pinentry program). don't know if i will ever fix this
 
 ## credits
 
